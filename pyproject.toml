@@ -1,0 +1,51 @@
+[project]
+name = "pagopar"
+description = "Asynchronous API wrapper for Pagopar written in Python."
+authors = [{ name = "AlanBogarin", email = "bogarin01alan@gmail.com" }]
+readme = "README.md"
+requires-python = ">=3.10"
+license = "MIT"
+license-files = ["LICENSE"]
+classifiers = [
+  "Operating System :: OS Independent",
+  "Programming Language :: Python :: 3",
+  "Programming Language :: Python :: 3.11",
+  "Programming Language :: Python :: 3.12",
+  "Programming Language :: Python :: 3.13",
+  "Programming Language :: Python :: 3.14",
+  "Topic :: Software Development :: Libraries :: Python Modules",
+  "Typing :: Typed",
+]
+keywords = [
+  "pagopar",
+  "api",
+  "async"
+]
+dynamic = ["dependencies", "version"]
+# "optional-dependencies"
+
+[project.urls]
+Homepage = "https://github.com/AlanBogarin/pagopar"
+Issues = "https://github.com/AlanBogarin/pagopar/issues"
+
+[build-system]
+requires = ["setuptools>=77.0.3", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools.dynamic]
+version = { attr = "pagopar.__version__" }
+dependencies = { file = "requirements.txt" }
+# optional-dependencies.bancard = { file = "requirements-bancard.txt" }
+
+[tool.setuptools.package-data]
+pymino = ["py.typed"]
+
+[tool.pyright]
+pythonVersion = "3.11"
+typeCheckingMode = "strict"
+strictListInference = true
+strictDictionaryInference = true
+strictSetInference = true
+
+[tool.black]
+line-length = 100
