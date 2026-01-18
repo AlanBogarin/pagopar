@@ -1,6 +1,6 @@
 import datetime
 import decimal
-from collections.abc import Sequence
+from collections.abc import Collection, Sequence
 
 import aiohttp
 import msgspec
@@ -31,7 +31,7 @@ class PaymentMethod(msgspec.Struct, omit_defaults=True):
     """Payment method description."""
 
 
-class OrderItemBase(msgspec.Struct, kw_only=True):
+class BasicItem(msgspec.Struct, kw_only=True):
     """Base structure for an order item."""
     quantity: int = msgspec.field(name="cantidad")
     """Quantity of the product or service."""
@@ -47,7 +47,7 @@ class OrderItemBase(msgspec.Struct, kw_only=True):
     """Total price for this item (quantity included)."""
 
 
-class OrderItem(OrderItemBase, kw_only=True):
+class Item(BasicItem, kw_only=True):
     """Order item with courier and seller information."""
     category_id: str = msgspec.field(default="909", name="categoria")
     """Courier service category ID (optional)."""
@@ -111,7 +111,7 @@ class Transaction(msgspec.Struct):
 
 async def start_transaction(
     commerce_order_id: str,
-    items: Sequence[OrderItem],
+    items: Collection[Item],
     amount: int,
     payment_type: _enums.PaymentType,
     max_payment_date: datetime.datetime,
@@ -136,7 +136,7 @@ async def start_transaction(
     ----------
     commerce_order_id : str
         Commerce order identifier. Must be unique across environments.
-    items : Sequence[OrderItem]
+    items : Collection[Item]
         List of products or services included in the order.
     amount : int
         Total transaction amount in Paraguayan Guaraníes (PYG).
@@ -229,7 +229,7 @@ async def start_transaction(
 
 async def start_transaction_in_usd(
     order_id: str,
-    items: Sequence[OrderItemBase],
+    items: Sequence[BasicItem],
     amount: int,
     payment_type: _enums.PaymentType,
     buyer_name: str,
@@ -249,7 +249,7 @@ async def start_transaction_in_usd(
     ----------
     order_id : str
         Commerce order identifier. Must be unique across environments.
-    items : Sequence[OrderItemBase]
+    items : Sequence[BasicItem]
         List of products or services included in the order.
     amount : int
         Total transaction amount in United States Dollars (USD).
