@@ -455,6 +455,3 @@ def select_shipping_method(
         shipping_cost=shipping_cost,
         selected_method=method,
     )
-
-
-
