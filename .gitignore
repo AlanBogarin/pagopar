@@ -153,3 +153,7 @@ dmypy.json
 
 # PyPI configuration file
 .pypirc
+
+# Reference files
+references/*
+!references/README.md

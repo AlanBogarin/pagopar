@@ -455,3 +455,62 @@ def select_shipping_method(
         shipping_cost=shipping_cost,
         selected_method=method,
     )
+
+
+class TrackedProduct(msgspec.Struct):
+    track_id: str = msgspec.field(name="id_tracking")
+    track_url: str = msgspec.field(name="url_tracking")
+    amount: str = msgspec.field(name="monto")
+    delivery_date: str = msgspec.field(name="fecha_estimada_entrega")
+    selected_method: str = msgspec.field(name="metodo_envio")  # {"AEX", ?}
+    product_ids: list[str] = msgspec.field(name="id_productos")
+    stage: str = msgspec.field(name="etapa")
+    aex_status: str = msgspec.field(name="estado_aex")  # {"Entregada", ?}
+    aex_event: str = msgspec.field(name="evento_aex")  # {"Entrega realizada", ?}
+    # mobi_status: exists?
+    # mobi_event: exists?
+
+
+async def track_order(
+    order_id: str,
+    product_id: str | None = None,
+    app: _app.Application | None = None,
+) -> list[TrackedProduct]:
+    """
+    Check the tracking status of an order or a specific product
+
+    Parameters
+    ----------
+    order_id : str
+        Unique order hash.
+    product_id : str, optional
+        Internal product identifier of the commerce.
+    app : Application, optional
+        Pagopar application configuration.
+
+    Returns
+    -------
+    list[TrackedProduct]
+        List of tracked product or services.
+
+    Raises
+    ------
+    PagoparError
+        If Pagopar rejects the request.
+    aiohttp.ClientResponseError
+        If a network-level error occurs.
+    msgspec.DecodeError
+        If the response cannot be decoded.
+    """
+    return await _http.send_request(
+        method=aiohttp.hdrs.METH_POST,
+        path="pedidos/1.1/tracking",
+        token_data="CONSULTA",
+        response_type=list[TrackedProduct],
+        payload={
+            "hash_pedido": order_id,
+            "id_producto": product_id,
+        },
+        key_public_token="public_key",
+        app=app,
+    )
