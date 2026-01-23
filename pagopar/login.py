@@ -1,11 +1,3 @@
-"""
-Cliente para interactuar con la API de Pagopar Login.
-
-Esta implementación se basó en el articulo proveido por Pagopar.
-https://soporte.pagopar.com/portal/es/kb/articles/pagopar-login-29-8-2020
-
-"""
-
 import decimal
 import urllib.parse
 
