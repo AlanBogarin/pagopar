@@ -1,6 +1,6 @@
 import enum
 import urllib.parse
-from typing import Literal
+from typing import Literal as _Literal
 
 import aiohttp
 import msgspec
@@ -132,7 +132,7 @@ async def add_client(
 async def add_card(
     commerce_client_id: int,
     commerce_checkout_url: str,
-    provider: Literal["uPay", "Bancard"],
+    provider: _Literal["uPay", "Bancard"],
     app: _app.Application | None = None,
 ) -> str:
     """
@@ -183,7 +183,7 @@ async def add_card(
 def add_card_bancard_iframe(
     alias_token: str,
     style: BandcardIFrameStyle | None = None,
-    environment: Literal["development", "production", "sandbox"] = "production",
+    environment: _Literal["development", "production", "sandbox"] = "production",
 ) -> str:
     """
     Builds the Bancard iframe URL for card registration.

@@ -1,6 +1,6 @@
 import datetime
 import enum
-from collections.abc import Sequence
+from collections.abc import Sequence as _Sequence
 
 import aiohttp
 import msgspec
@@ -302,7 +302,7 @@ async def get_categories(app: _app.Application | None = None) -> list[Category]:
 
 async def calculate_freight(
     commerce_order_id: str,
-    items: Sequence[PhysicalItem],
+    items: _Sequence[PhysicalItem],
     amount: int,
     max_payment_date: datetime.datetime,
     buyer_name: str,

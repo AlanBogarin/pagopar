@@ -1,6 +1,6 @@
 import datetime
 import decimal
-from collections.abc import Collection, Sequence
+from collections.abc import Collection as _Collection, Sequence as _Sequence
 
 import aiohttp
 import msgspec
@@ -111,7 +111,7 @@ class Transaction(msgspec.Struct):
 
 async def start_transaction(
     commerce_order_id: str,
-    items: Collection[Item],
+    items: _Collection[Item],
     amount: int,
     payment_type: _enums.PaymentType,
     max_payment_date: datetime.datetime,
@@ -229,7 +229,7 @@ async def start_transaction(
 
 async def start_transaction_in_usd(
     order_id: str,
-    items: Sequence[BasicItem],
+    items: _Sequence[BasicItem],
     amount: int,
     payment_type: _enums.PaymentType,
     buyer_name: str,
