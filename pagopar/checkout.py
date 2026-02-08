@@ -1,6 +1,8 @@
 import datetime
 import decimal
+import enum
 from collections.abc import Collection as _Collection, Sequence as _Sequence
+from typing import Any as _Any
 
 import aiohttp
 import msgspec
@@ -19,6 +21,7 @@ __all__ = (
 
 class PaymentMethod(msgspec.Struct, omit_defaults=True):
     """Represents a Pagopar payment method."""
+
     id: str = msgspec.field(name="forma_pago")
     """Payment method identifier."""
     min_amount: int = msgspec.field(name="monto_minimo")
@@ -33,6 +36,7 @@ class PaymentMethod(msgspec.Struct, omit_defaults=True):
 
 class BasicItem(msgspec.Struct, kw_only=True):
     """Base structure for an order item."""
+
     quantity: int = msgspec.field(name="cantidad")
     """Quantity of the product or service."""
     description: str = msgspec.field(name="descripcion")
@@ -49,6 +53,7 @@ class BasicItem(msgspec.Struct, kw_only=True):
 
 class Item(BasicItem, kw_only=True):
     """Order item with courier and seller information."""
+
     category_id: str = msgspec.field(default="909", name="categoria")
     """Courier service category ID (optional)."""
     city_id: str = msgspec.field(default="1", name="ciudad")
@@ -69,6 +74,7 @@ class Item(BasicItem, kw_only=True):
 
 class OrderMessage(msgspec.Struct):
     """Represents a payment result message."""
+
     description: str = msgspec.field(name="descripcion")
     """HTML content of the message."""
     title: str = msgspec.field(name="titulo")
@@ -77,6 +83,7 @@ class OrderMessage(msgspec.Struct):
 
 class Order(msgspec.Struct):
     """Represents a Pagopar order."""
+
     amount: str = msgspec.field(name="monto")
     """Transaction amount."""
     cancelled: bool = msgspec.field(name="cancelado")
@@ -99,10 +106,12 @@ class Order(msgspec.Struct):
     """Payment method name."""
     token: str
     """Order security token."""
+    extra_data: dict[str, _Any] | None = msgspec.field(default=None, name="datos_adicionales")
 
 
 class Transaction(msgspec.Struct):
     """Transaction initialization response."""
+
     order_id: str = msgspec.field(name="data")
     """Pagopar order identifier."""
     order_num: str = msgspec.field(name="pedido")
@@ -432,8 +441,92 @@ async def get_order(order_id: str, app: _app.Application | None = None) -> Order
         path="pedidos/1.1/traer",
         token_data="CONSULTA",
         response_type=list[Order],
-        payload={"hash_pedido": order_id},
+        payload={"hash_pedido": order_id, "datos_adicionales": True},
         key_public_token="token_publico",
         app=app,
     )
     return response[0]
+
+
+class ReverseType(enum.Enum):
+    """Defines when the reversal will be executed."""
+
+    INMEDIATLY = "Inmediata"
+    PROGRAMED = "Agendada"
+
+
+class ReversedOrder(msgspec.Struct):
+    """
+    Represents the result of a paid order reversal request.
+    """
+
+    payment_method_id: str = msgspec.field(name="forma_pago")  # int
+    """Payment method identifier used in the original transaction."""
+    order_id: str = msgspec.field(name="hash")
+    """Unique Pagopar order hash."""
+    order_number: str = msgspec.field(name="pedido")  # int
+    """Commerce order number."""
+    transaction_id: str = msgspec.field(name="transaccion")
+    """Transaction identifier, primarily for internal use."""
+    transaction_status: str = msgspec.field(name="estado_transaccion")
+    """Transaction status identifier, mainly for internal tracking."""
+    reverse_type: ReverseType = msgspec.field(name="tiempo_reversion")
+    """Indicates whether the reversal was processed immediately or scheduled for a later execution."""
+    extra_data: dict[str, _Any] | None = msgspec.field(default=None, name="otros_datos")
+    """Additional data returned by Pagopar, if any."""
+
+
+async def reverse_paid_order(
+    order_id: str,
+    app: _app.Application | None = None,
+) -> list[ReversedOrder]:
+    """
+    Request the reversal of a paid order.
+
+    Order reversal is available only for payments made using:
+    - Credit/debit cards processed through Bancard
+    - Zimple
+    - Tigo Money
+    - Giros Claro
+    - Wally
+    - Billetera Personal
+
+    If the reversal request is submitted on the same day the payment was made,
+    the reversal may be processed immediately. Requests made on subsequent days
+    will be scheduled for later execution.
+
+    Even if the request is made late on the same day, Pagopar may still
+    schedule the reversal instead of processing it immediately.
+
+    Parameters
+    ----------
+    order_id : str
+        Pagopar order identifier.
+    app : Application, optional
+        Pagopar application configuration.
+
+    Returns
+    -------
+    list[Order]
+        Reversal result information for the requested order.
+
+    Raises
+    ------
+    PagoparError
+        If Pagopar rejects the request.
+    aiohttp.ClientResponseError
+        If a network error occurs.
+    msgspec.DecodeError
+        If the response cannot be decoded.
+    """
+    return await _http.send_request(
+        method=aiohttp.hdrs.METH_POST,
+        path="pedidos/1.1/reversar",
+        token_data="PEDIDO-REVERSAR",
+        response_type=list[ReversedOrder],
+        payload={
+            "hash_pedido": order_id,
+        },
+        key_public_token="token_publico",
+        app=app,
+    )
