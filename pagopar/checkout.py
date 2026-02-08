@@ -448,6 +448,74 @@ async def get_order(order_id: str, app: _app.Application | None = None) -> Order
     return response[0]
 
 
+async def modify_order(
+    order_id: str,
+    amount: int | None = None,
+    description: str | None = None,
+    max_payment_date: str | None = None,
+    quotation: int | None = None,
+    app: _app.Application | None = None,
+) -> str:
+    """
+    Modify an already created order.
+
+    This operation allows the merchant to update specific fields of an
+    existing Pagopar order due to business-related needs, as long as the
+    order has not been finalized or paid.
+
+    Parameters
+    ----------
+    order_id : str
+        Pagopar order identifier.
+    amount : int, optional
+        Total transaction amount.
+    description : str, optional
+        Order message
+    max_payment_date : str, optional
+        Deadline for completing the payment.
+    quotation : int, optional
+        This field is not officially documented by Pagopar and may be
+        related to foreign currency handling.
+    app : Application, optional
+        Pagopar application configuration.
+
+    Returns
+    -------
+    str
+        Pagopar order id (hash).
+
+    Raises
+    ------
+    PagoparError
+        If Pagopar rejects the request.
+    aiohttp.ClientResponseError
+        If a network error occurs.
+    msgspec.DecodeError
+        If the response cannot be decoded.
+    """
+    payload: dict[str, _Any] = {
+        "hash_pedido": order_id,
+    }
+    if amount is not None:
+        payload["monto"] = amount
+    if description is not None:
+        payload["descripcion"] = description
+    if max_payment_date is not None:
+        payload["fecha_maxima_pago"] = max_payment_date
+    if quotation:  # TODO: possible bad name
+        payload["cotizacion"] = quotation
+    response = await _http.send_request(
+        method=aiohttp.hdrs.METH_POST,
+        path="pedidos/1.1/cambiar-datos/",
+        token_data="CAMBIAR-PEDIDO",
+        response_type=list[dict[str, _Any]],
+        payload=payload,
+        key_public_token="token_publico",
+        app=app,
+    )
+    return response[0]["data"]
+
+
 class ReverseType(enum.Enum):
     """Defines when the reversal will be executed."""
 
