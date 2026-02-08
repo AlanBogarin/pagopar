@@ -59,7 +59,7 @@ def create_session(proxy: str | None) -> aiohttp.ClientSession:
     )
 
 
-def create_token(token_data: str, app: _app.Application | None = None) -> str:
+def create_token(token_data: str, app: "_app.Application | None" = None) -> str:
     """Genera un Token para el pedido"""
     app = _app.check_initialized_app(app)
     return hashlib.sha1((app.private_token + token_data).encode('utf-8')).hexdigest()
@@ -73,7 +73,7 @@ async def send_request(
     payload: dict[str, JSON],
     key_hashed_token: str = "token",
     key_public_token: str = "public_key",
-    app: _app.Application | None = None,
+    app: "_app.Application | None" = None,
 ) -> T:
     headers = params = data = None
 
