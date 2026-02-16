@@ -38,7 +38,7 @@ dependencies = { file = "requirements.txt" }
 # optional-dependencies.bancard = { file = "requirements-bancard.txt" }
 
 [tool.setuptools.package-data]
-pymino = ["py.typed"]
+pagopar = ["py.typed"]
 
 [tool.pyright]
 pythonVersion = "3.11"
