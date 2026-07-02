@@ -10,3 +10,5 @@ including payment processing, order management, and recurring payments.
 from pagopar._app import *
 from pagopar._enums import *
 from pagopar._errors import *
+
+__version__ = "0.1.0"

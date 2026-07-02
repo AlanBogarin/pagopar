@@ -153,10 +153,10 @@ class ShippingOptionsSelection(ShippingOptions, kw_only=True):
 class PhysicalItem(_checkout.Item, kw_only=True):
     """Order item that requires shipping calculation."""
 
-    weight: str = msgspec.field(default="", name="peso")
-    length: str = msgspec.field(default="", name="largo")
-    width: str = msgspec.field(default="", name="ancho")
-    height: str = msgspec.field(default="", name="alto")
+    weight: str | None = msgspec.field(default=None, name="peso")
+    length: str | None = msgspec.field(default=None, name="largo")
+    width: str | None = msgspec.field(default=None, name="ancho")
+    height: str | None = msgspec.field(default=None, name="alto")
     shipping_options: ShippingOptions = msgspec.field(name="opciones_envio")
 
 

@@ -22,7 +22,7 @@ __all__ = (
 class PaymentMethod(msgspec.Struct, omit_defaults=True):
     """Represents a Pagopar payment method."""
 
-    id: str = msgspec.field(name="forma_pago")
+    id: int = msgspec.field(name="forma_pago")
     """Payment method identifier."""
     min_amount: int = msgspec.field(name="monto_minimo")
     """Minimum allowed payment amount."""
@@ -41,7 +41,7 @@ class BasicItem(msgspec.Struct, kw_only=True):
     """Quantity of the product or service."""
     description: str = msgspec.field(name="descripcion")
     """Description of the product or service."""
-    image_url: str = msgspec.field(default="", name="url_imagen")
+    image_url: str | None = msgspec.field(default=None, name="url_imagen")
     """Product image URL (optional)."""
     name: str = msgspec.field(name="nombre")
     """Name of the product or service."""
@@ -58,15 +58,15 @@ class Item(BasicItem, kw_only=True):
     """Courier service category ID (optional)."""
     city_id: str = msgspec.field(default="1", name="ciudad")
     """Buyer city identifier (optional)."""
-    seller_address: str = msgspec.field(default="", name="vendedor_direccion")
+    seller_address: str | None = msgspec.field(default=None, name="vendedor_direccion")
     """Seller address (optional)."""
-    seller_address_ref: str = msgspec.field(default="", name="vendedor_direccion_referencia")
+    seller_address_ref: str | None = msgspec.field(default=None, name="vendedor_direccion_referencia")
     """Seller address reference."""
-    seller_address_coordinates: str = msgspec.field(
-        default="", name="vendedor_direccion_coordenadas"
+    seller_address_coordinates: str | None = msgspec.field(
+        default=None, name="vendedor_direccion_coordenadas"
     )
     """Seller address coordinates."""
-    seller_phone: str = msgspec.field(default="", name="vendedor_telefono")
+    seller_phone: str | None = msgspec.field(default=None, name="vendedor_telefono")
     """Seller phone number (optional)."""
     seller_public_key: str = msgspec.field(name="public_key")
     """Seller public key."""
@@ -100,7 +100,7 @@ class Order(msgspec.Struct):
     """Payment date (ISO 8601), if paid."""
     payment_message: OrderMessage = msgspec.field(name="mensaje_resultado_pago")
     """Payment result message."""
-    payment_method_id: str = msgspec.field(name="forma_pago_identificador")
+    payment_method_id: int = msgspec.field(name="forma_pago_identificador")
     """Payment method identifier."""
     payment_method_name: str = msgspec.field(name="forma_pago")
     """Payment method name."""
@@ -528,7 +528,7 @@ class ReversedOrder(msgspec.Struct):
     Represents the result of a paid order reversal request.
     """
 
-    payment_method_id: str = msgspec.field(name="forma_pago")  # int
+    payment_method_id: int = msgspec.field(name="forma_pago")
     """Payment method identifier used in the original transaction."""
     order_id: str = msgspec.field(name="hash")
     """Unique Pagopar order hash."""

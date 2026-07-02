@@ -67,7 +67,7 @@ class Subscription(msgspec.Struct):
 
     Common values include ``Pendiente de Pago``, ``Cancelada``, and ``Pagada``.
     """
-    debit_amount: str | None = msgspec.field(name="cantidad_debito")
+    debit_amount: int | None = msgspec.field(name="cantidad_debito")
     """Number of billing cycles already charged to the user."""
     visit_amount: str = msgspec.field(name="visitas")
     """Number of visits included or consumed by the subscription."""
@@ -77,7 +77,7 @@ class Subscription(msgspec.Struct):
 
     Example values include ``Mensual``.
     """
-    payment_method_id: str = msgspec.field(name="identificador_forma_pago")
+    payment_method_id: int = msgspec.field(name="identificador_forma_pago")
     """Identifier of the payment method selected at subscription time."""
     payment_method_title: str = msgspec.field(name="titulo_forma_pago")
     """Description of the payment method selected at subscription time."""
@@ -100,7 +100,7 @@ class Payment(msgspec.Struct):
     """Internal payment receipt number."""
     payment_date: str = msgspec.field(name="fecha_pago")
     """Date when the payment was completed."""
-    payment_method_id: str = msgspec.field(name="identificador_forma_pago_transaccion")
+    payment_method_id: int = msgspec.field(name="identificador_forma_pago_transaccion")
     """Identifier of the payment method used in the transaction."""
     payment_method_title: str = msgspec.field(name="titulo_forma_pago_transaccion")
     """Description of the payment method used in the transaction."""

@@ -15,7 +15,7 @@ __all__ = (
 
 
 class PaymentMethod(msgspec.Struct):
-    id: str = msgspec.field(name="forma_pago")
+    id: int = msgspec.field(name="forma_pago")
     """Payment method identifier."""
     min_amount: int = msgspec.field(name="monto_minimo")
     """Minimum allowed amount for this payment method."""
@@ -93,7 +93,7 @@ class Commerce(msgspec.Struct):
     """Indicates if local withdrawal is available."""
     own_shipping: bool = msgspec.field(name="envio_propio")
     """Indicates if the commerce uses its own shipping."""
-    commerce_id: int = msgspec.field(name="comercio")
+    commerce_id: str = msgspec.field(name="comercio")
     """Commerce identifier."""
     ranking: int
     """Commerce ranking score."""

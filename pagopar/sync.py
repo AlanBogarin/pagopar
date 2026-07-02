@@ -369,7 +369,7 @@ class Category(msgspec.Struct):
     """
     physic_product: bool = msgspec.field(name="producto_fisico")
     """Indicates whether the category corresponds to a physical product."""
-    commerce_id: int = msgspec.field(name="comercio")
+    commerce_id: str = msgspec.field(name="comercio")
     """Pagopar commerce identifier (informational only)."""
 
 
@@ -384,7 +384,7 @@ class AddressInfo(msgspec.Struct):
     """Geographic coordinates of the pickup location."""
     note: str = msgspec.field(name="observacion")
     """Additional notes to help locate the pickup point."""
-    city_id: int = msgspec.field(name="ciudad")
+    city_id: str = msgspec.field(name="ciudad")
     """Pagopar city identifier."""
     city_name: str = msgspec.field(name="ciudad_descripcion")
     """City name."""
@@ -418,7 +418,7 @@ class CityShipping(msgspec.Struct):
     Shipping configuration for a specific destination city.
     """
 
-    city_id: int = msgspec.field(name="ciudad")
+    city_id: str = msgspec.field(name="ciudad")
     """Destination city identifier."""
     name: str = msgspec.field(name="descripcion")
     """Destination city name."""
