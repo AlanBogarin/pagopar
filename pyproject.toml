@@ -34,11 +34,14 @@ build-backend = "setuptools.build_meta"
 
 [tool.setuptools.dynamic]
 version = { attr = "pagopar.__version__" }
-dependencies = { file = "requirements.txt" }
+dependencies = { file = ["requirements.txt"] }
 # optional-dependencies.bancard = { file = "requirements-bancard.txt" }
 
 [tool.setuptools.package-data]
 pagopar = ["py.typed"]
+
+[tool.setuptools.packages.find]
+include = ["pagopar*"]
 
 [tool.pyright]
 pythonVersion = "3.11"
@@ -46,6 +49,7 @@ typeCheckingMode = "strict"
 strictListInference = true
 strictDictionaryInference = true
 strictSetInference = true
+reportPrivateUsage = false
 
 [tool.black]
 line-length = 100
