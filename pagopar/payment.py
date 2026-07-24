@@ -5,7 +5,10 @@ from typing import Literal as _Literal
 import aiohttp
 import msgspec
 
-from pagopar import _app, _http
+from pagopar import (
+    app as _app,
+    http as _http,
+)
 
 __all__ = ()
 
@@ -78,7 +81,7 @@ async def add_client(
     fullname: str,
     email: str,
     phone: str,
-    app: _app.Application | None = None,
+    app: _app.Application | str | None = None,
 ) -> Client:
     """
     Registers a customer in Pagopar for recurring payments.
@@ -96,7 +99,7 @@ async def add_client(
         Customer email address.
     phone : str
         Customer mobile phone number.
-    app : Application, optional
+    app : Application, str, optional
         Pagopar commerce configuration.
 
     Returns
@@ -133,7 +136,7 @@ async def add_card(
     commerce_client_id: int,
     commerce_checkout_url: str,
     provider: _Literal["uPay", "Bancard"],
-    app: _app.Application | None = None,
+    app: _app.Application | str | None = None,
 ) -> str:
     """
     Initiates the card registration process for a previously registered customer.
@@ -147,7 +150,7 @@ async def add_card(
         the card registration process.
     provider : {"uPay", "Bancard"}
         Card registration provider.
-    app : Application, optional
+    app : Application, str, optional
         Pagopar commerce configuration.
 
     Returns
@@ -246,7 +249,7 @@ def add_card_upay_iframe(alias_token: str) -> str:
 async def confirm_card(
     commerce_client_id: int,
     commerce_checkout_url: str,
-    app: _app.Application | None = None,
+    app: _app.Application | str | None = None,
 ) -> None:
     """
     Confirms a previously registered card after the iframe flow completes.
@@ -260,7 +263,7 @@ async def confirm_card(
         Unique customer identifier in the commerce system.
     commerce_checkout_url : str
         Redirect URL used during the card registration process.
-    app : Application, optional
+    app : Application, str, optional
         Pagopar commerce configuration.
 
     Raises
@@ -286,7 +289,7 @@ async def confirm_card(
 
 async def get_cards(
     commerce_client_id: int,
-    app: _app.Application | None = None,
+    app: _app.Application | str | None = None,
 ) -> list[Card]:
     """
     Retrieves all cards previously registered for a customer.
@@ -299,7 +302,7 @@ async def get_cards(
     ----------
     commerce_client_id : int
         Unique customer identifier in the commerce system.
-    app : Application, optional
+    app : Application, str, optional
         Pagopar commerce configuration.
 
     Returns
@@ -332,7 +335,7 @@ async def get_cards(
 async def delete_card(
     commerce_client_id: int,
     card_alias_token: str,
-    app: _app.Application | None = None,
+    app: _app.Application | str | None = None,
 ) -> None:
     """
     Deletes a previously registered card.
@@ -346,7 +349,7 @@ async def delete_card(
         Unique customer identifier in the commerce system.
     card_alias_token : str
         Temporary alias token obtained from :func:`get_cards`.
-    app : Application, optional
+    app : Application, str, optional
         Pagopar commerce configuration.
 
     Raises
@@ -377,7 +380,7 @@ async def pay(
     commerce_client_id: int,
     card_alias_token: str,
     order_id: str,
-    app: _app.Application | None = None,
+    app: _app.Application | str | None = None,
 ) -> None:
     """
     Executes a payment using a previously registered card.
@@ -393,7 +396,7 @@ async def pay(
         Temporary alias token obtained from :func:`get_cards`.
     order_id : str
         Pagopar order identifier.
-    app : Application, optional
+    app : Application, str, optional
         Pagopar commerce configuration.
 
     Raises
@@ -426,7 +429,7 @@ async def pre_authorize(
     amount: int,
     commerce_client_id: int,
     commerce_transaction_id: int,
-    app: _app.Application | None = None,
+    app: _app.Application | str | None = None,
 ) -> PreAuthorize:
     """
     Creates a card preauthorization, temporarily reserving funds.
@@ -444,7 +447,7 @@ async def pre_authorize(
         Unique customer identifier in the commerce system.
     commerce_transaction_id : int
         Commerce-side transaction identifier.
-    app : Application, optional
+    app : Application, str, optional
         Pagopar commerce configuration.
 
     Returns
@@ -482,7 +485,7 @@ async def confirm_preauthorization(
     pagopar_transaction_id: str,
     commerce_transaction_id: int,
     commerce_client_id: int,
-    app: _app.Application | None = None,
+    app: _app.Application | str | None = None,
 ) -> None:
     """
     Confirms a previously created preauthorization, capturing the funds.
@@ -497,7 +500,7 @@ async def confirm_preauthorization(
         Commerce-side transaction identifier.
     commerce_client_id : int
         Unique customer identifier in the commerce system.
-    app : Application, optional
+    app : Application, str, optional
         Pagopar commerce configuration.
 
     Raises
@@ -530,7 +533,7 @@ async def cancel_preauthorization(
     pagopar_transaction_id: str,
     commerce_transaction_id: int,
     commerce_client_id: int,
-    app: _app.Application | None = None,
+    app: _app.Application | str | None = None,
 ) -> str:
     """
     Cancels an existing preauthorization and releases reserved funds.
@@ -547,7 +550,7 @@ async def cancel_preauthorization(
         Commerce-side transaction identifier.
     commerce_client_id : int
         Unique customer identifier in the commerce system.
-    app : Application, optional
+    app : Application, str, optional
         Pagopar commerce configuration.
 
     Returns
@@ -583,7 +586,7 @@ async def cancel_preauthorization(
 async def personal_pay(
     order_id: str,
     phone: str,
-    app: _app.Application | None = None,
+    app: _app.Application | str | None = None,
 ) -> None:
     """
     Executes a payment using Personal Pay (Billetera Personal).
@@ -594,7 +597,7 @@ async def personal_pay(
         Pagopar order identifier.
     phone : str
         Personal Pay phone number.
-    app : Application, optional
+    app : Application, str, optional
         Pagopar commerce configuration.
 
     Raises

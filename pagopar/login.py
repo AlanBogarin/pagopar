@@ -4,7 +4,10 @@ import urllib.parse
 import aiohttp
 import msgspec
 
-from pagopar import _app, _http
+from pagopar import (
+    app as _app,
+    http as _http,
+)
 
 __all__ = (
     "confirm_linking",
@@ -168,7 +171,7 @@ def linking_url(
 async def confirm_linking(
     public_token: str,
     user_id: int,
-    app: _app.Application | None = None,
+    app: _app.Application | str | None = None,
 ) -> Commerce:
     """
     After returning from the linking URL and landing on the commerce page,
@@ -214,7 +217,7 @@ async def confirm_linking(
 async def get_linked_commerce(
     public_token: str,
     user_id: int,
-    app: _app.Application | None = None,
+    app: _app.Application | str | None = None,
 ) -> Commerce:
     """
     Retrieve linked commerce data in real time.
@@ -255,7 +258,7 @@ async def get_linked_commerce(
     )
 
 
-async def get_commerce(app: _app.Application | None = None) -> Commerce:
+async def get_commerce(app: _app.Application | str | None = None) -> Commerce:
     """
     Retrieve commerce data in real time.
 

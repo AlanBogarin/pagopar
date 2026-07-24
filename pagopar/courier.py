@@ -5,7 +5,12 @@ from collections.abc import Sequence as _Sequence
 import aiohttp
 import msgspec
 
-from pagopar import _app, _enums, _http, checkout as _checkout
+from pagopar import (
+    app as _app,
+    http as _http,
+    checkout as _checkout,
+    enums as _enums,
+)
 
 __all__ = ()
 
@@ -177,7 +182,7 @@ class City(msgspec.Struct):
     )
 
 
-async def get_cities(app: _app.Application | None = None) -> list[City]:
+async def get_cities(app: _app.Application | str | None = None) -> list[City]:
     """
     Retrieve the list of cities available for pickup and delivery services
     offered by delivery providers associated with Pagopar.
@@ -186,7 +191,7 @@ async def get_cities(app: _app.Application | None = None) -> list[City]:
 
     Parameters
     ----------
-    app : Application, optional
+    app : Application, str, optional
         Pagopar commerce/application configuration.
         If not provided, the default application configuration is used.
 
@@ -216,7 +221,7 @@ async def get_cities(app: _app.Application | None = None) -> list[City]:
 
 
 async def get_neighborhoods(
-    app: _app.Application | None = None,
+    app: _app.Application | str | None = None,
 ) -> list[City]:
     """
     Retrieve the list of cities along with their available neighborhoods
@@ -232,7 +237,7 @@ async def get_neighborhoods(
 
     Parameters
     ----------
-    app : Application, optional
+    app : Application, str, optional
         Pagopar application configuration.
         If not provided, the default application configuration is used.
 
@@ -262,7 +267,7 @@ async def get_neighborhoods(
     return [msgspec.json.decode(city, type=City) for array in response for city in array]
 
 
-async def get_categories(app: _app.Application | None = None) -> list[Category]:
+async def get_categories(app: _app.Application | str | None = None) -> list[Category]:
     """
     Retrieve the list of Pagopar product categories used for freight calculation.
 
@@ -273,7 +278,7 @@ async def get_categories(app: _app.Application | None = None) -> list[Category]:
 
     Parameters
     ----------
-    app : Application, optional
+    app : Application, str, optional
         Pagopar application configuration.
 
     Returns
@@ -318,7 +323,7 @@ async def calculate_freight(
     buyer_address_coordinates: str | None = None,
     payment_type: _enums.PaymentType | None = None,
     description: str | None = None,
-    app: _app.Application | None = None,
+    app: _app.Application | str | None = None,
 ) -> list[PhysicalItem]:
     """
     Request available freight options and delivery services for an order.
@@ -353,7 +358,7 @@ async def calculate_freight(
         Payment method.
     description : str, optional
         Order summary description.
-    app : Application, optional
+    app : Application, str, optional
         Pagopar application configuration.
 
     Returns
@@ -474,7 +479,7 @@ class TrackedProduct(msgspec.Struct):
 async def track_order(
     order_id: str,
     product_id: str | None = None,
-    app: _app.Application | None = None,
+    app: _app.Application | str | None = None,
 ) -> list[TrackedProduct]:
     """
     Check the tracking status of an order or a specific product
@@ -485,7 +490,7 @@ async def track_order(
         Unique order hash.
     product_id : str, optional
         Internal product identifier of the commerce.
-    app : Application, optional
+    app : Application, str, optional
         Pagopar application configuration.
 
     Returns

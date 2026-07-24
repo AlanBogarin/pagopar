@@ -3,7 +3,7 @@ import threading
 
 import aiohttp
 
-from pagopar import _http
+from pagopar import http as _http
 
 __all__ = ("Application", "initialize_app", "get_app", "close_app")
 
@@ -168,30 +168,32 @@ def get_app(name: str = _DEFAULT_APP_NAME) -> Application:
     raise ValueError(f"Pagopar named {name!r} not exists.")
 
 
-async def close_app(name: str = _DEFAULT_APP_NAME) -> None:
+async def close_app(app: Application | str | None = None) -> None:
     """
     Close an initialized application and its associated HTTP session.
 
     Parameters
     ----------
-    name : str, optional
-        The name of the application to close.
+    app : Application, str, optional
+        The object or name of the application to close.
 
     Raises
     ------
     ValueError
         If no application with the specified name exists.
     """
-    app = get_app(name)
+    app = check_initialized_app(app)
     with _APP_LOCK:
-        del _apps[name]
+        del _apps[app.name]
     if app._session and not app._session.closed:
         await app.session.close()
 
 
-def check_initialized_app(app: Application | None) -> Application:
+def check_initialized_app(app: Application | str | None) -> Application:
     if app is None:
         return get_app()
-    if app is not get_app(app.name):
+    if isinstance(app, str):
+        app = get_app(app)
+    elif app is not get_app(app.name):
         raise ValueError("Application instance not initialized via the pagopar module.")
     return app

@@ -12,7 +12,10 @@ from typing import (
 import aiohttp
 import msgspec
 
-from pagopar import _app, _http
+from pagopar import (
+    app as _app,
+    http as _http,
+)
 
 __all__ = ()
 
@@ -150,7 +153,7 @@ async def create_product(
     mobi_config: MOBIConfig | None = None,
     enabled: bool = True,
     importable: bool = True,
-    app: _app.Application | None = None,
+    app: _app.Application | str | None = None,
 ) -> ProductOperation:
     """
     Create a new product in Pagopar.
@@ -179,7 +182,7 @@ async def create_product(
         Whether the product is active.
     importable : bool, optional
         Whether the product is publicly accessible.
-    app : Application, optional
+    app : Application, str, optional
         Pagopar commerce configuration.
 
     Returns
@@ -232,7 +235,7 @@ async def edit_product(
     mobi_config: MOBIConfig | None,
     enabled: bool,
     importable: bool,
-    app: _app.Application | None = None,
+    app: _app.Application | str | None = None,
 ) -> ProductOperation:
     """
     Update an existing product in Pagopar.
@@ -261,7 +264,7 @@ async def edit_product(
         Whether the product should be active.
     importable : bool, None
         Whether the product should be publicly accessible.
-    app : Application, optional
+    app : Application, str, optional
         Pagopar commerce configuration.
 
     Returns

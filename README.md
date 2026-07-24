@@ -42,10 +42,17 @@ from pagopar import initialize_app, close_app
 
 # Initialize with environment variables or pass tokens here
 app = initialize_app()
+other = initialize_app(
+    private_token="other_private_token",
+    public_token="other_public_token",
+    # When needs multiple instances, set the name as a unique identifier
+    name="other-app",
+)
 
 async def main():
     # Your logic here
     await close_app()
+    await close_app(other)
 
 if __name__ == "__main__":
     asyncio.run(main())
@@ -57,7 +64,7 @@ Generate a payment link for a user.
 
 ```python
 import datetime
-from pagopar import checkout, _enums
+from pagopar import checkout, enums
 
 async def create_order():
     # Define items
@@ -76,13 +83,13 @@ async def create_order():
         commerce_order_id="ORDER-001",
         items=[item],
         amount=150000,
-        payment_type=_enums.PaymentType.PAGO_EXPRESS,
+        payment_type=enums.PaymentType.PAGO_EXPRESS,
         max_payment_date=datetime.datetime.now() + datetime.timedelta(days=1),
         buyer_name="John Doe",
         buyer_email="john.doe@example.com",
         buyer_phone="0981123456",
         buyer_document="1234567",
-        buyer_document_type=_enums.DocumentType.CI
+        buyer_document_type=enums.DocumentType.CI
     )
 
     # Get checkout URL

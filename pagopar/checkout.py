@@ -1,13 +1,20 @@
 import datetime
 import decimal
 import enum
-from collections.abc import Collection as _Collection, Sequence as _Sequence
+from collections.abc import (
+    Collection as _Collection,
+    Sequence as _Sequence,
+)
 from typing import Any as _Any
 
 import aiohttp
 import msgspec
 
-from pagopar import _app, _enums, _http
+from pagopar import (
+    app as _app,
+    http as _http,
+    enums as _enums,
+)
 
 __all__ = (
     "check_pagopar_payment",
@@ -136,7 +143,7 @@ async def start_transaction(
     buyer_address_ref: str | None = None,
     buyer_address_coordinates: str | None = None,
     description: str | None = None,
-    app: _app.Application | None = None,
+    app: _app.Application | str | None = None,
 ) -> Transaction:
     """
     Create and initialize a Pagopar transaction in local currency (PYG).
@@ -177,7 +184,7 @@ async def start_transaction(
         Geographical coordinates of the buyer address.
     description : str, optional
         Short order description.
-    app : Application, optional
+    app : Application, str, optional
         Pagopar application configuration.
 
     Returns
@@ -249,7 +256,7 @@ async def start_transaction_in_usd(
     buyer_legal_name: str = "",
     buyer_pays_commission: bool = True,
     description: str | None = None,
-    app: _app.Application | None = None,
+    app: _app.Application | str | None = None,
 ) -> Transaction:
     """
     Create and initialize a Pagopar transaction in foreign currency (USD).
@@ -280,7 +287,7 @@ async def start_transaction_in_usd(
         Indicates whether the payment commission is transferred to the buyer.
     description : str, optional
         Short order description.
-    app : Application, optional
+    app : Application, str, optional
         Pagopar application configuration.
 
     Returns
@@ -357,14 +364,14 @@ def pagopar_checkout_url(
 
 
 async def get_payment_methods(
-    app: _app.Application | None = None,
+    app: _app.Application | str | None = None,
 ) -> list[PaymentMethod]:
     """
     Retrieve the list of available payment methods.
 
     Parameters
     ----------
-    app : Application, optional
+    app : Application, str, optional
         Pagopar application configuration.
 
     Returns
@@ -411,7 +418,7 @@ def check_pagopar_payment(token: str, order_id: str) -> bool:
     return token == _http.create_token(order_id)
 
 
-async def get_order(order_id: str, app: _app.Application | None = None) -> Order:
+async def get_order(order_id: str, app: _app.Application | str | None = None) -> Order:
     """
     Retrieve the current status and details of an order.
 
@@ -419,7 +426,7 @@ async def get_order(order_id: str, app: _app.Application | None = None) -> Order
     ----------
     order_id : str
         Pagopar order identifier.
-    app : Application, optional
+    app : Application, str, optional
         Pagopar application configuration.
 
     Returns
@@ -454,7 +461,7 @@ async def modify_order(
     description: str | None = None,
     max_payment_date: str | None = None,
     quotation: int | None = None,
-    app: _app.Application | None = None,
+    app: _app.Application | str | None = None,
 ) -> str:
     """
     Modify an already created order.
@@ -476,7 +483,7 @@ async def modify_order(
     quotation : int, optional
         This field is not officially documented by Pagopar and may be
         related to foreign currency handling.
-    app : Application, optional
+    app : Application, str, optional
         Pagopar application configuration.
 
     Returns
@@ -546,7 +553,7 @@ class ReversedOrder(msgspec.Struct):
 
 async def reverse_paid_order(
     order_id: str,
-    app: _app.Application | None = None,
+    app: _app.Application | str | None = None,
 ) -> list[ReversedOrder]:
     """
     Request the reversal of a paid order.
@@ -570,7 +577,7 @@ async def reverse_paid_order(
     ----------
     order_id : str
         Pagopar order identifier.
-    app : Application, optional
+    app : Application, str, optional
         Pagopar application configuration.
 
     Returns

@@ -3,17 +3,27 @@ import datetime
 import decimal
 import hashlib
 import uuid
-from collections.abc import Collection, Mapping
-from typing import Generic, TypeVar, cast
+from collections.abc import (
+    Collection as _Collection,
+    Mapping as _Mapping,
+)
+from typing import (
+    Generic as _Generic,
+    TypeVar as _TypeVar,
+    cast as _cast,
+)
 
 import aiohttp
 import msgspec
 
-from pagopar import _app, _errors
+from pagopar import (
+    app as _app,
+    errors as _errors,
+)
 
-T = TypeVar("T")
+T = _TypeVar("T")
 
-__all__ = ()
+__all__ = ("JSONStrOrNum", "JSON", "Response", "send_request")
 
 
 JSONStrOrNum = (
@@ -30,8 +40,8 @@ JSONStrOrNum = (
 )
 
 JSON = (
-    Collection["JSON"]
-    | Mapping[JSONStrOrNum, "JSON"]
+    _Collection["JSON"]
+    | _Mapping[JSONStrOrNum, "JSON"]
     | msgspec.Struct
     | msgspec.Raw
     | msgspec.msgpack.Ext
@@ -43,7 +53,7 @@ JSON = (
 JSONQuery = dict[str, list[float | str] | float | str]
 
 
-class Response(msgspec.Struct, Generic[T]):
+class Response(msgspec.Struct, _Generic[T]):
     success: bool = msgspec.field(name="respuesta")
     payload: T | str = msgspec.field(default="", name="resultado")
 
@@ -83,7 +93,7 @@ def create_token(token_data: str, app: "_app.Application | None" = None) -> str:
     ----------
     token_data : str
         Data string specific to the endpoint request (e.g., amount, order ID).
-    app : Application, optional
+    app : Application, str, optional
         Pagopar application configuration.
 
     Returns
@@ -103,7 +113,7 @@ async def send_request(
     payload: dict[str, JSON],
     key_hashed_token: str = "token",
     key_public_token: str = "public_key",
-    app: "_app.Application | None" = None,
+    app: "_app.Application | str | None" = None,
 ) -> T:
     """
     Send an authenticated JSON request to the Pagopar API.
@@ -127,7 +137,7 @@ async def send_request(
         Key name for the hashed token in the payload. Defaults to "token".
     key_public_token : str, optional
         Key name for the public token in the payload. Defaults to "public_key".
-    app : Application, optional
+    app : Application, str, optional
         Pagopar application configuration.
 
     Returns
@@ -152,7 +162,7 @@ async def send_request(
     payload[key_public_token] = app.public_token
 
     if method in aiohttp.ClientRequest.GET_METHODS:
-        params = cast(JSONQuery, payload)
+        params = _cast(JSONQuery, payload)
     elif method in aiohttp.ClientRequest.POST_METHODS:
         data = encoder.encode(payload)
         headers = {"Content-Type": "application/json; charset=utf-8"}
@@ -173,5 +183,5 @@ async def send_request(
             response.raise_for_status()
             raise
     if not model.success:
-        raise _errors.parse_error(cast(str, model.payload))
-    return cast(T, model.payload)
+        raise _errors.parse_error(_cast(str, model.payload))
+    return _cast(T, model.payload)
