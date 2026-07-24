@@ -462,13 +462,13 @@ class TrackedProduct(msgspec.Struct):
     track_url: str = msgspec.field(name="url_tracking")
     amount: str = msgspec.field(name="monto")
     delivery_date: str = msgspec.field(name="fecha_estimada_entrega")
-    selected_method: str = msgspec.field(name="metodo_envio")  # {"AEX", ?}
+    selected_method: str = msgspec.field(name="metodo_envio")  # {"AEX", "MOBI"}
     product_ids: list[str] = msgspec.field(name="id_productos")
     stage: str = msgspec.field(name="etapa")
-    aex_status: str = msgspec.field(name="estado_aex")  # {"Entregada", ?}
-    aex_event: str = msgspec.field(name="evento_aex")  # {"Entrega realizada", ?}
-    # mobi_status: exists?
-    # mobi_event: exists?
+    aex_status: str | None = msgspec.field(default=None, name="estado_aex")  # {"Entregada", ?}
+    aex_event: str | None = msgspec.field(default=None, name="evento_aex")  # {"Entrega realizada", ?}
+    mobi_status: str | None = msgspec.field(default=None, name="estado_mobi")
+    mobi_event: str | None = msgspec.field(default=None, name="evento_mobi")
 
 
 async def track_order(

@@ -167,7 +167,7 @@ async def add_card(
     return await _http.send_request(
         method=aiohttp.hdrs.METH_POST,
         path="pago-recurrente/3.0/agregar-tarjeta/",
-        token_data="",
+        token_data="PAGO-RECURRENTE",
         response_type=str,
         payload={
             "url": commerce_checkout_url,
