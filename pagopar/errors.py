@@ -5,10 +5,10 @@ __all__= ("ClientResponseError", "DecodeError", "PagoparError",)
 
 
 class PagoparError(Exception):
-    __slots__ = ("mensaje",)
+    __slots__ = ("message",)
 
-    def __init__(self, mensaje: str) -> None:
-        self.mensaje = mensaje
+    def __init__(self, message: str) -> None:
+        self.message = message
 
 
 class InvalidTokenException(PagoparError):
