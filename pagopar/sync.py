@@ -502,7 +502,7 @@ class ProductLog(LogBase):
     """Public token of the commerce."""
     log_id: str = msgspec.field(name="logs")
     """Pagopar log identifier."""
-    log_date: datetime.datetime = msgspec.field(name="fecha")
+    log_date: _http.DateTime = msgspec.field(name="fecha")
     """Timestamp when the log was generated."""
     quantity_sold: int = msgspec.field(name="cantidad_venta")
     """Total quantity sold in this synchronization event."""
@@ -530,7 +530,7 @@ class InventoryLog(LogBase):
     """Public token of the commerce."""
     log_id: str = msgspec.field(name="logs")
     """Pagopar log identifier."""
-    log_date: datetime.datetime = msgspec.field(name="fecha")
+    log_date: _http.DateTime = msgspec.field(name="fecha")
     """Timestamp when the log was generated."""
     quantity_sold: int = msgspec.field(name="cantidad_venta")
     """Total quantity sold in this synchronization event."""

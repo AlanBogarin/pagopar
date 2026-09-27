@@ -383,7 +383,7 @@ async def calculate_freight(
         payload={
             "monto_total": amount,
             "tipo_pedido": "VENTA-COMERCIO",
-            "fecha_maxima_pago": max_payment_date.isoformat(" "),
+            "fecha_maxima_pago": _http.DateTime.from_datetime(max_payment_date),
             "id_pedido_comercio": commerce_order_id,
             "descripcion_resumen": description or "",
             "forma_pago": payment_type,

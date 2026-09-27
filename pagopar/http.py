@@ -23,7 +23,7 @@ from pagopar import (
 
 T = _TypeVar("T")
 
-__all__ = ("JSONStrOrNum", "JSON", "Response", "send_request")
+__all__ = ("DateTime", "JSONStrOrNum", "JSON", "Response", "send_request")
 
 
 JSONStrOrNum = (
@@ -58,8 +58,41 @@ class Response(msgspec.Struct, _Generic[T]):
     payload: T | str = msgspec.field(default="", name="resultado")
 
 
-encoder = msgspec.json.Encoder()
+class DateTime(datetime.datetime):
+    """
+    Subclass of datetime used exclusively for formatting date and time 
+    during serialization and deserialization with msgspec.
+    """
 
+    DT_FORMAT = "%Y-%m-%d %H:%M:%S.%f"
+    DT_TIMEZONE = datetime.timezone(datetime.timedelta(hours=-3))
+
+    @classmethod
+    def from_datetime(cls, dt: datetime.datetime) -> "DateTime":
+        if type(dt) is cls and dt.tzinfo == cls.DT_TIMEZONE:
+            return dt
+        if dt.tzinfo is None:
+            dt = dt.replace(tzinfo=cls.DT_TIMEZONE)
+        elif dt.tzinfo != cls.DT_TIMEZONE:
+            dt = dt.astimezone(cls.DT_TIMEZONE)
+        return cls(
+            dt.year, dt.month, dt.day,
+            dt.hour, dt.minute, dt.second,
+            dt.microsecond, tzinfo=cls.DT_TIMEZONE
+        )
+
+
+def encoder_hook(value: object) -> str:
+    if isinstance(value, DateTime):
+        return DateTime.from_datetime(value).strftime(DateTime.DT_FORMAT)
+    raise TypeError(f"Unsupported type: {type(value)!r}")
+
+def decoder_hook(dtype: type, value: str) -> object:
+    if dtype is DateTime:
+        return DateTime.from_datetime(datetime.datetime.strptime(value, DateTime.DT_FORMAT))
+    raise TypeError(f"Unsupported type: {dtype}!r")
+
+encoder = msgspec.json.Encoder(enc_hook=encoder_hook)
 
 def create_session(proxy: str | None) -> aiohttp.ClientSession:
     """
@@ -176,7 +209,7 @@ async def send_request(
         data=data,
         headers=headers,
     ) as response:
-        decoder = msgspec.json.Decoder(Response[response_type], strict=False)
+        decoder = msgspec.json.Decoder(Response[response_type], strict=False, dec_hook=decoder_hook)
         try:
             model: Response[T] = await response.json(loads=decoder.decode)
         except msgspec.DecodeError:

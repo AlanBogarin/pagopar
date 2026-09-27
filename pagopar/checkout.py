@@ -213,12 +213,12 @@ async def start_transaction(
     response = await _http.send_request(
         method=aiohttp.hdrs.METH_POST,
         path="comercios/2.0/iniciar-transaccion",
-        token_data=str(amount),
+        token_data=commerce_order_id + str(amount),
         response_type=list[Transaction],
         payload={
             "monto_total": amount,
             "tipo_pedido": order_type,
-            "fecha_maxima_pago": max_payment_date.isoformat(" "),
+            "fecha_maxima_pago": _http.DateTime.from_datetime(max_payment_date),
             "id_pedido_comercio": commerce_order_id,
             "descripcion_resumen": description or "",
             "forma_pago": payment_type,
