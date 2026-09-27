@@ -22,7 +22,6 @@ keywords = [
   "async"
 ]
 dynamic = ["dependencies", "version"]
-# "optional-dependencies"
 
 [project.urls]
 Homepage = "https://github.com/AlanBogarin/pagopar"
@@ -35,7 +34,6 @@ build-backend = "setuptools.build_meta"
 [tool.setuptools.dynamic]
 version = { attr = "pagopar.__version__" }
 dependencies = { file = ["requirements.txt"] }
-# optional-dependencies.bancard = { file = "requirements-bancard.txt" }
 
 [tool.setuptools.package-data]
 pagopar = ["py.typed"]
