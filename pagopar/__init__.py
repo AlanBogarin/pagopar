@@ -12,4 +12,4 @@ from pagopar.app import *
 from pagopar import errors as errors
 from pagopar import http as http
 
-__version__ = "0.1.0"
+__version__ = "1.0.0"
